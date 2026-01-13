@@ -1,13 +1,16 @@
 package com.ddd.ddd.infraestructure.adapter.out;
 
-// infraestructura/adaptadores/InMemoryPedidoRepository.java
-
 import com.ddd.ddd.application.port.out.PedidoRepository;
 import com.ddd.ddd.domain.aggregate.Pedido;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
 
+/**
+ * Implementación del repositorio en memoria para desarrollo o pruebas.
+ * <p>
+ * Persiste el agregado Pedido como una unidad completa.
+ */
 @Repository
 public class InMemoryPedidoRepository implements PedidoRepository {
 
@@ -24,4 +27,5 @@ public class InMemoryPedidoRepository implements PedidoRepository {
         return Optional.ofNullable(memoria.get(id));
     }
 }
+
 
