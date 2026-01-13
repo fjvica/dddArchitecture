@@ -1,52 +1,34 @@
 package com.ddd.ddd.application.service;
 
-import com.ddd.ddd.application.port.in.CrearPedidoUseCase;
-import com.ddd.ddd.application.port.out.GuardarPedidoPort;
-import com.ddd.ddd.domain.model.Cliente;
-import com.ddd.ddd.domain.model.Pedido;
-import com.ddd.ddd.domain.model.Producto;
-import com.ddd.ddd.domain.service.CalculadoraDescuento;
-import org.springframework.stereotype.Service;
+// aplicacion/servicios/CrearPedidoService.java
 
-import java.math.BigDecimal;
+import com.ddd.ddd.application.port.in.CrearPedido;
+import com.ddd.ddd.application.port.out.PedidoRepository;
+import com.ddd.ddd.domain.aggregate.Pedido;
+import com.ddd.ddd.domain.entity.LineaPedido;
+import com.ddd.ddd.domain.valueObject.Cantidad;
+import com.ddd.ddd.domain.valueObject.CategoriaProducto;
+import com.ddd.ddd.domain.valueObject.Precio;
 
-/**
- * Servicio de aplicación:
- * - Orquesta la creación de un pedido
- * - No contiene reglas de negocio
- * - Llama a los agregados y a los puertos de salida
- */
-@Service
-public class CrearPedidoService implements CrearPedidoUseCase {
+public class CrearPedidoService implements CrearPedido {
 
-    private final GuardarPedidoPort pedidoRepository;
-    private final CalculadoraDescuento calculadoraDescuento;
+    private final PedidoRepository pedidoRepository;
 
-    public CrearPedidoService(GuardarPedidoPort pedidoRepository, CalculadoraDescuento calculadoraDescuento) {
+    public CrearPedidoService(PedidoRepository pedidoRepository) {
         this.pedidoRepository = pedidoRepository;
-        this.calculadoraDescuento = calculadoraDescuento;
     }
 
-    @Override
-    public Pedido ejecutar(Long clienteId) {
-        // 1️⃣ Crear agregado raíz
-        Cliente cliente = new Cliente(clienteId, "Cliente " + clienteId);
-        Pedido pedido = new Pedido(cliente);
+    public Pedido ejecutar() {
+        Pedido pedido = new Pedido(java.util.UUID.randomUUID().toString());
 
-        // 2️⃣ Añadir productos al pedido
-        pedido.añadirProducto(new Producto(1L, "Camiseta", BigDecimal.valueOf(60)), 1);
-        pedido.añadirProducto(new Producto(2L, "Pantalón", BigDecimal.valueOf(50)), 1);
+        // Lógica de negocio: agregar algunos productos iniciales
+        pedido.agregarProducto(new LineaPedido("p1", CategoriaProducto.ELECTRONICA, new Cantidad(2), new Precio(java.math.BigDecimal.valueOf(50))));
+        pedido.agregarProducto(new LineaPedido("p2", CategoriaProducto.HOGAR, new Cantidad(1), new Precio(java.math.BigDecimal.valueOf(30))));
+        pedido.agregarProducto(new LineaPedido("p3", CategoriaProducto.ELECTRONICA, new Cantidad(2), new Precio(java.math.BigDecimal.valueOf(20))));
 
-        // 3️⃣ Aplicar descuentos usando servicio de dominio
-        BigDecimal totalConDescuento = calculadoraDescuento.aplicarDescuento(pedido);
-        System.out.println("Total con descuento: " + totalConDescuento);
-
-        // 4️⃣ Confirmar el pedido si quieres (opcional)
-        pedido.confirmar();
-
-        // 5️⃣ Guardar mediante puerto de salida
+        // Guardar usando el puerto
         return pedidoRepository.guardar(pedido);
     }
-
 }
+
 
