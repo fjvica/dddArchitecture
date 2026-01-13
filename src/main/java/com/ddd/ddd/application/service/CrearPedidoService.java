@@ -1,5 +1,6 @@
 package com.ddd.ddd.application.service;
 
+import com.ddd.ddd.application.port.in.CrearPedido;
 import com.ddd.ddd.application.port.out.PedidoRepository;
 import com.ddd.ddd.domain.aggregate.Pedido;
 import com.ddd.ddd.domain.entity.LineaPedido;
@@ -13,7 +14,7 @@ import com.ddd.ddd.domain.valueObject.Precio;
  * Orquesta la creación del agregado Pedido, agrega productos y lo persiste
  * usando el puerto PedidoRepository.
  */
-public class CrearPedidoService {
+public class CrearPedidoService implements CrearPedido {
 
     private final PedidoRepository pedidoRepository;
 

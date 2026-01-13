@@ -1,5 +1,6 @@
 package com.ddd.ddd.infraestructure.adapter.in;
 
+import com.ddd.ddd.application.port.in.CrearPedido;
 import com.ddd.ddd.application.service.CrearPedidoService;
 import com.ddd.ddd.domain.aggregate.Pedido;
 import org.springframework.web.bind.annotation.*;
@@ -13,10 +14,10 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/pedidos")
 public class PedidoController {
 
-    private final CrearPedidoService crearPedidoService;
+    private final CrearPedido crearPedido;
 
-    public PedidoController(CrearPedidoService crearPedidoService) {
-        this.crearPedidoService = crearPedidoService;
+    public PedidoController(CrearPedido crearPedido) {
+        this.crearPedido = crearPedido;
     }
 
     /**
@@ -26,6 +27,6 @@ public class PedidoController {
      */
     @PostMapping
     public Pedido crearPedido() {
-        return crearPedidoService.ejecutar();
+        return crearPedido.ejecutar();
     }
 }
